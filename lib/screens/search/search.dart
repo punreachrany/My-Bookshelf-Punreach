@@ -84,36 +84,40 @@ class _SearchState extends State<Search> {
         });
       }
     } else {
-      // === Load Keyword from API === //
-      print("=== Load keyword : >$query< From API ===");
+      try {
+        // === Load Keyword from API === //
+        print("=== Load keyword : >$query< From API ===");
 
-      if (mounted) setState(() => isSearching = true);
-      if (query.trim().isEmpty) {
-        initSearch();
-      }
-      setState(() {
-        books.clear();
-      });
-
-      var response = await BookApi.searchBooks(query, 0);
-
-      //
-
-      if (!response['isError']) {
-        var data = response["data"]["books"];
-
-        await data.forEach((book) => queryBooks.add(Book.fromJson(book)));
-
-        await await utilities.saveDataCache(query, data);
-
-        if (mounted) {
-          setState(() {
-            books = queryBooks;
-            isSearching = false;
-          });
+        if (mounted) setState(() => isSearching = true);
+        if (query.trim().isEmpty) {
+          initSearch();
         }
-      } else {
-        print("=== Error ===");
+        setState(() {
+          books.clear();
+        });
+
+        var response = await BookApi.searchBooks(query, 0);
+
+        //
+
+        if (!response['isError']) {
+          var data = response["data"]["books"];
+
+          await data.forEach((book) => queryBooks.add(Book.fromJson(book)));
+
+          await await utilities.saveDataCache(query, data);
+
+          if (mounted) {
+            setState(() {
+              books = queryBooks;
+              isSearching = false;
+            });
+          }
+        } else {
+          print("=== Error ===");
+        }
+      } catch (e) {
+        print("${e.toString()}");
       }
     }
   }
@@ -171,6 +175,8 @@ class _SearchState extends State<Search> {
                     onChanged: (text) {
                       if (text.isNotEmpty) {
                         searchBooks(text);
+                      } else {
+                        initSearch();
                       }
                     },
                     decoration: InputDecoration(
