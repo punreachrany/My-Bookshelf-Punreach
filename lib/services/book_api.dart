@@ -10,7 +10,7 @@ class BookApi {
     "data": ""
   };
 
-  // ======== New Books START ========
+  // ======== New Books  ========
   static Future<Map<String, dynamic>> getAllNewBooks() async {
     var url = "$baseUrl/new";
     var response = await http.get(url);
@@ -32,7 +32,7 @@ class BookApi {
     return defaultResponse;
   }
 
-  // ======== Search Books START ========
+  // ======== Search Books ========
   static Future<Map<String, dynamic>> searchBooks(
       String query, int page) async {
     /// here we define the endpoint for searching
@@ -64,7 +64,7 @@ class BookApi {
     return defaultResponse;
   }
 
-  /// ======== Search Books START========
+  /// ======== Get Book Detail By ISBN13 ========
   static Future<Map<String, dynamic>> getBookByISBN13(String isbn13) async {
     var url = "$baseUrl/books/$isbn13";
     var response = await http.get(url);

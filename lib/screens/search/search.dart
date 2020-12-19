@@ -117,7 +117,7 @@ class _SearchState extends State<Search> {
 
             await data.forEach((book) => queryBooks.add(Book.fromJson(book)));
 
-            await await utilities.saveDataCache(query, data);
+            await utilities.saveDataCache(query, data);
 
             if (mounted) {
               setState(() {
