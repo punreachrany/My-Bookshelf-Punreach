@@ -11,6 +11,7 @@ A new Flutter project.
 - shared_preferences: ^0.5.12+4   => https://pub.dev/packages/shared_preferences
 - path_provider: ^1.6.24 => https://pub.dev/packages/path_provider
 - connectivity: ^2.0.2 => https://pub.dev/packages/connectivity
+- provider: ^4.3.2+3 => https://pub.dev/packages/provider
 
 ## Getting Started
 

@@ -131,7 +131,7 @@ class _SearchState extends State<Search> {
           setState(() {
             noInternet = true;
           });
-          print("No Internet");
+          print("No Internet $result");
         }
       } catch (e) {
         print("${e.toString()}");
