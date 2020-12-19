@@ -10,6 +10,7 @@ A new Flutter project.
 - url_launcher: ^5.7.10   => https://pub.dev/packages/url_launcher
 - shared_preferences: ^0.5.12+4   => https://pub.dev/packages/shared_preferences
 - path_provider: ^1.6.24 => https://pub.dev/packages/path_provider
+- connectivity: ^2.0.2 => https://pub.dev/packages/connectivity
 
 ## Getting Started
 
