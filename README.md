@@ -16,7 +16,7 @@ This is a flutter application that consists of 2 main screens - Search & Detail.
 - Connectivity Monitoring
 
 ## Setup
-- `git clone https://github.com/punreachrany/My-Bookshelf-Punreach.git`
+- git clone `https://github.com/punreachrany/My-Bookshelf-Punreach.git`
 - run `flutter pub get`
 - run `flutter run`
 
