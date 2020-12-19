@@ -4,6 +4,7 @@ import 'package:My_Bookshelf_Punreach/models/book.dart';
 import 'package:My_Bookshelf_Punreach/screens/detail/detail.dart';
 import 'package:My_Bookshelf_Punreach/services/book_api.dart';
 import 'package:My_Bookshelf_Punreach/shares/utilities.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 
 class Search extends StatefulWidget {
@@ -18,6 +19,8 @@ class _SearchState extends State<Search> {
   bool isSearching = false;
   LoadingState state = LoadingState.loading;
   bool isLoadingMore = false;
+
+  bool noInternet = false;
 
   // For Books ListView
   List<Book> books = new List<Book>();
@@ -86,35 +89,49 @@ class _SearchState extends State<Search> {
     } else {
       try {
         // === Load Keyword from API === //
-        print("=== Load keyword : >$query< From API ===");
+        ConnectivityResult result = await Connectivity().checkConnectivity();
 
-        if (mounted) setState(() => isSearching = true);
-        if (query.trim().isEmpty) {
-          initSearch();
-        }
-        setState(() {
-          books.clear();
-        });
+        if (result == ConnectivityResult.wifi ||
+            result == ConnectivityResult.mobile) {
+          setState(() {
+            noInternet = false;
+          });
+          print("Internet $result");
+          print("=== Load keyword : >$query< From API ===");
 
-        var response = await BookApi.searchBooks(query, 0);
+          if (mounted) setState(() => isSearching = true);
+          if (query.trim().isEmpty) {
+            initSearch();
+          }
+          setState(() {
+            books.clear();
+          });
 
-        //
+          var response = await BookApi.searchBooks(query, 0);
 
-        if (!response['isError']) {
-          var data = response["data"]["books"];
+          //
 
-          await data.forEach((book) => queryBooks.add(Book.fromJson(book)));
+          if (!response['isError']) {
+            var data = response["data"]["books"];
 
-          await await utilities.saveDataCache(query, data);
+            await data.forEach((book) => queryBooks.add(Book.fromJson(book)));
 
-          if (mounted) {
-            setState(() {
-              books = queryBooks;
-              isSearching = false;
-            });
+            await await utilities.saveDataCache(query, data);
+
+            if (mounted) {
+              setState(() {
+                books = queryBooks;
+                isSearching = false;
+              });
+            }
+          } else {
+            print("=== Error ===");
           }
         } else {
-          print("=== Error ===");
+          setState(() {
+            noInternet = true;
+          });
+          print("No Internet");
         }
       } catch (e) {
         print("${e.toString()}");
@@ -144,9 +161,14 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Search"),
-        ),
+        appBar: noInternet
+            ? AppBar(
+                backgroundColor: Colors.red,
+                title: Text("No Internet"),
+              )
+            : AppBar(
+                title: Text("Search"),
+              ),
         body: Container(
           child: SingleChildScrollView(
             child: Column(
