@@ -33,6 +33,7 @@ class _BookWebViewState extends State<BookWebView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          // This will launch the book detail page in browser
           if (await canLaunch(url)) {
             await launch(url);
           } else {
@@ -43,6 +44,7 @@ class _BookWebViewState extends State<BookWebView> {
         child: Icon(Icons.open_in_browser_rounded),
         backgroundColor: Colors.purple,
       ),
+      // View Website inside an App platform
       body: WebView(
         initialUrl: url,
         onWebViewCreated: (WebViewController webViewController) {

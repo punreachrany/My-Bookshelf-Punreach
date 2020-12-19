@@ -3,10 +3,8 @@ import 'dart:convert';
 import 'package:My_Bookshelf_Punreach/models/book.dart';
 import 'package:My_Bookshelf_Punreach/screens/detail/detail.dart';
 import 'package:My_Bookshelf_Punreach/services/book_api.dart';
-import 'package:My_Bookshelf_Punreach/shares/loading.dart';
+import 'package:My_Bookshelf_Punreach/shares/utilities.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class Search extends StatefulWidget {
   @override
@@ -16,36 +14,46 @@ class Search extends StatefulWidget {
 enum LoadingState { loading, done }
 
 class _SearchState extends State<Search> {
+  // For Loading
   bool isSearching = false;
-  List<Book> books = new List<Book>();
   LoadingState state = LoadingState.loading;
   bool isLoadingMore = false;
 
-  int page = 1;
+  // For Books ListView
+  List<Book> books = new List<Book>();
+
+  // For shared property
+  Utilities utilities = new Utilities();
+
   TextEditingController searchController = new TextEditingController();
 
+  // Get new book for initSearch
   Future<List<Book>> getNewBooks() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String initSearchFilename = "https://api.itbook.store/1.0/new";
     List<Book> queryBooks = new List<Book>();
-    String localData = prefs.getString("https://api.itbook.store/1.0/new");
 
-    print("InitSearch");
+    // === Check for DataCache === //
+    String localData = await utilities.getDataCache(initSearchFilename);
+
+    // print("InitSearch");
 
     if (localData != null) {
+      // === Load InitSearch from Local === //
       print("=== Load InitSearch from Local ===");
+
       var decodedData = jsonDecode(localData);
 
       await decodedData.forEach((book) => queryBooks.add(Book.fromJson(book)));
     } else {
+      // === Load Data from API === //
       var response = await BookApi.getAllNewBooks();
+
       if (!response['isError']) {
         var data = response["data"]["books"];
         await data.forEach((book) => queryBooks.add(Book.fromJson(book)));
 
-        print("==== Save InitSearch to Local ====");
-        await prefs.setString(
-            "https://api.itbook.store/1.0/new", jsonEncode(data));
-        print("=== Local Saved Successful ===");
+        // === Save InitSearch to Local === //
+        await utilities.saveDataCache(initSearchFilename, data);
       } else {
         print("=== Error ===");
       }
@@ -54,14 +62,16 @@ class _SearchState extends State<Search> {
     return queryBooks;
   }
 
+  // User Search
   void searchBooks(String query) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String localData = prefs.getString(query);
+    // === Check for DataCache === //
+    String localData = await utilities.getDataCache(query);
     List<Book> queryBooks = new List<Book>();
 
     // print(query);
 
     if (localData != null) {
+      // === Load Keyword from Local === //
       print("=== Load keyword : >$query< from Local ===");
       var decodedData = jsonDecode(localData);
 
@@ -74,11 +84,12 @@ class _SearchState extends State<Search> {
         });
       }
     } else {
+      // === Load Keyword from API === //
       print("=== Load keyword : >$query< From API ===");
 
       if (mounted) setState(() => isSearching = true);
       if (query.trim().isEmpty) {
-        init();
+        initSearch();
       }
       setState(() {
         books.clear();
@@ -93,23 +104,22 @@ class _SearchState extends State<Search> {
 
         await data.forEach((book) => queryBooks.add(Book.fromJson(book)));
 
-        print("==== Save keyword : >$query< to Local ====");
-        await prefs.setString(query, jsonEncode(data));
-        print("=== Local Saved Successful ===");
+        await await utilities.saveDataCache(query, data);
 
         if (mounted) {
           setState(() {
-            // books = isFreeOnly ? queryBooks.where((book)=> book.price == "\$0.00").toList() :  queryBooks;
             books = queryBooks;
             isSearching = false;
           });
         }
+      } else {
+        print("=== Error ===");
       }
-      page = 1;
     }
   }
 
-  init() {
+  // Initiate a search for new book every time user launch the app
+  initSearch() {
     if (mounted) setState(() => state = LoadingState.loading);
     getNewBooks().then((data) {
       if (mounted) {
@@ -123,24 +133,8 @@ class _SearchState extends State<Search> {
 
   @override
   void initState() {
-    init();
+    initSearch();
     super.initState();
-  }
-
-  Future<String> _getImage(String isbn13, String imageURL) async {
-    String base64;
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    base64 = prefs.getString(isbn13 + "_cache_image");
-    // print("=== Check for >$isbn13 cache image< in Local ===");
-    if (base64 == null) {
-      // print("=== Save >$isbn13 cache image< to Local ===");
-      final http.Response response = await http.get(
-        imageURL,
-      );
-      base64 = base64Encode(response.bodyBytes);
-      prefs.setString(isbn13 + "_cache_image", base64);
-    }
-    return base64;
   }
 
   @override
@@ -159,8 +153,6 @@ class _SearchState extends State<Search> {
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 10),
-
-                  // Rmargin: EdgeInsets.all(16),
                   decoration: new BoxDecoration(
                     boxShadow: [
                       BoxShadow(
@@ -175,8 +167,6 @@ class _SearchState extends State<Search> {
                     ],
                   ),
                   child: TextField(
-                    // autofocus: false,
-
                     controller: searchController,
                     onChanged: (text) {
                       if (text.isNotEmpty) {
@@ -188,7 +178,7 @@ class _SearchState extends State<Search> {
                         borderSide: BorderSide.none,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      hintText: "Search...",
+                      hintText: "Search your keyword...",
                       hintStyle: TextStyle(color: Colors.grey[400]),
                       prefixIcon: Icon(
                         Icons.search,
@@ -203,9 +193,8 @@ class _SearchState extends State<Search> {
                         onPressed: () {
                           setState(() {
                             searchController.clear();
-                            page = 1;
                           });
-                          init();
+                          initSearch();
                         },
                       ),
                       filled: true,
@@ -226,7 +215,7 @@ class _SearchState extends State<Search> {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Your book list",
+                    "Your Books List",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -239,7 +228,11 @@ class _SearchState extends State<Search> {
                 Builder(
                   builder: (c) {
                     if (isSearching) {
-                      return Center(child: Text("Searching..."));
+                      return Center(
+                          child: Text(
+                        "Searching for ${searchController.text}...",
+                        style: TextStyle(fontSize: 20),
+                      ));
                     }
 
                     switch (state) {
@@ -257,15 +250,10 @@ class _SearchState extends State<Search> {
                                 shrinkWrap: true,
                                 itemCount: books.length,
                                 physics: NeverScrollableScrollPhysics(),
-                                // separatorBuilder: (context, index) {
-                                //   return Divider(
-                                //     thickness: 2,
-                                //   );
-                                // },
+
                                 itemBuilder: (BuildContext context, int index) {
                                   return InkWell(
                                     onTap: () {
-                                      // print(books[index].image);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -300,9 +288,11 @@ class _SearchState extends State<Search> {
                                               child: Container(
                                                 height: 150,
                                                 child: FutureBuilder<String>(
-                                                    future: _getImage(
-                                                        books[index].isbn13,
-                                                        books[index].image),
+                                                    // === Get Image Cache === //
+                                                    future: utilities
+                                                        .getBookImageCache(
+                                                            books[index].isbn13,
+                                                            books[index].image),
                                                     builder:
                                                         (context, snapshot) {
                                                       if (snapshot.data !=
@@ -317,7 +307,8 @@ class _SearchState extends State<Search> {
                                                           fit: BoxFit.contain,
                                                         );
                                                       } else {
-                                                        return Loading();
+                                                        return utilities
+                                                            .loading();
                                                       }
                                                     }),
                                               ),
@@ -385,10 +376,15 @@ class _SearchState extends State<Search> {
                                   );
                                 },
                               )
-                            : Center(child: Text("No Books Found."));
+                            : Center(
+                                child: Text(
+                                "Cannot find ${searchController.text}",
+                                style: TextStyle(fontSize: 20),
+                              ));
                     }
                   },
                 ),
+                SizedBox(height: 10)
               ],
             ),
           ),

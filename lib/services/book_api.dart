@@ -10,7 +10,7 @@ class BookApi {
     "data": ""
   };
 
-  //////////////////======== New Books START========/////////////////
+  // ======== New Books START ========
   static Future<Map<String, dynamic>> getAllNewBooks() async {
     var url = "$baseUrl/new";
     var response = await http.get(url);
@@ -32,17 +32,7 @@ class BookApi {
     return defaultResponse;
   }
 
-  //////////////////======== New Books END========/////////////////
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  /// //////////////////======== Search Books START========/////////////////
+  // ======== Search Books START ========
   static Future<Map<String, dynamic>> searchBooks(
       String query, int page) async {
     /// here we define the endpoint for searching
@@ -74,17 +64,7 @@ class BookApi {
     return defaultResponse;
   }
 
-  /// //////////////////======== Search Books END========/////////////////
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  /// //////////////////======== Search Books START========/////////////////
+  /// ======== Search Books START========
   static Future<Map<String, dynamic>> getBookByISBN13(String isbn13) async {
     var url = "$baseUrl/books/$isbn13";
     var response = await http.get(url);
@@ -106,17 +86,13 @@ class BookApi {
     return defaultResponse;
   }
 
-  /// //////////////////======== Search Books END========/////////////////
-
-/////////////////  RUN CODE WITH ISOLATE ( has its own memory ) to avoid app lagging.///////////////////////////////
+// ======== RUN CODE WITH ISOLATE ( has its own memory ) to avoid app lagging.
   static Future<dynamic> decodeJsonInBackground(dynamic responseBody) async {
     return compute(backgroundTask, responseBody);
   }
 
   static Future<dynamic> backgroundTask(dynamic responseBody) async {
-    //every code inside this function will run in an isolate.
+    // every code inside this function will run in an isolate.
     return await json.decode(responseBody);
   }
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
 }

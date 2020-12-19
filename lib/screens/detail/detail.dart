@@ -3,10 +3,9 @@ import 'dart:convert';
 import 'package:My_Bookshelf_Punreach/models/book.dart';
 import 'package:My_Bookshelf_Punreach/screens/detail/book_webview.dart';
 import 'package:My_Bookshelf_Punreach/services/book_api.dart';
-import 'package:My_Bookshelf_Punreach/shares/loading.dart';
+import 'package:My_Bookshelf_Punreach/shares/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class Detail extends StatefulWidget {
   final String isbn13;
@@ -29,43 +28,33 @@ class _DetailState extends State<Detail> {
   // Book book;
   LoadingState state = LoadingState.loading;
 
-  Future<String> _getImage(String imageURL) async {
-    String base64;
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    base64 = prefs.getString(isbn13 + "_cache_image");
-    // print("=== Check for >$isbn13 cache image< in Local ===");
-    if (base64 == null) {
-      // print("=== Save >$isbn13 cache image< to Local ===");
-      final http.Response response = await http.get(
-        imageURL,
-      );
-      base64 = base64Encode(response.bodyBytes);
-      prefs.setString(isbn13 + "_cache_image", base64);
-    }
-    return base64;
-  }
+  // For shared property
+  Utilities utilities = new Utilities();
 
   Future<Book> getBookDetails() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String bookDetailFilename = isbn13 + "book";
     Book queryBooks = new Book();
-    String localData = prefs.getString(isbn13 + "book");
+
+    // === Check for Data Cache === //
+    String localData = await utilities.getDataCache(bookDetailFilename);
 
     print("=== Get book details for Book by isbn13 >$isbn13< ===");
 
     if (localData != null) {
-      print("=== Load from Local Book Details ===");
+      // === Load Book Details from Local === //
+      print("=== Load Book Details from Local ===");
       var decodedData = jsonDecode(localData);
       queryBooks = Book.fromJson(decodedData);
     } else {
+      // === Load Book Details from API === //
       var response = await BookApi.getBookByISBN13(isbn13);
-      // print(response);
+
       if (!response["isError"]) {
         var data = response["data"];
         queryBooks = Book.fromJson(data);
 
-        print("==== Save to Local ====");
-        await prefs.setString(isbn13 + "book", jsonEncode(data));
-        print("=== Local Saved Successful ===");
+        // === Save Data Cache === //
+        utilities.saveDataCache(bookDetailFilename, data);
       } else {
         print("=== Error ===");
       }
@@ -94,16 +83,16 @@ class _DetailState extends State<Detail> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text("Book Details"),
       ),
       body: book == null
-          ? Loading()
+          ? utilities.loading()
           : Container(
               width: double.infinity,
               height: double.infinity,
@@ -131,7 +120,9 @@ class _DetailState extends State<Detail> {
                                     color: Colors.transparent,
                                     // with Material
                                     child: FutureBuilder<String>(
-                                        future: _getImage(book.image),
+                                        // === Get Image Cache === //
+                                        future: utilities.getBookImageCache(
+                                            book.isbn13, book.image),
                                         builder: (context, snapshot) {
                                           if (snapshot.data != null) {
                                             String _base64 = snapshot.data;
@@ -142,15 +133,10 @@ class _DetailState extends State<Detail> {
                                               fit: BoxFit.contain,
                                             );
                                           } else {
-                                            return Loading();
+                                            return utilities.loading();
                                           }
                                         }),
 
-                                    // Image.network(
-                                    //   book.image,
-                                    //   width: size.width / 3,
-                                    //   fit: BoxFit.contain,
-                                    // ),
                                     elevation: 30,
                                   ),
                                 ),
@@ -380,12 +366,6 @@ class _DetailState extends State<Detail> {
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
-                    // Container(
-                    //   padding:
-                    //       EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                    //   alignment: Alignment.centerLeft,
-                    //   child: Text(book.),
-                    // ),
 
                     SizedBox(
                       height: 20,
@@ -435,18 +415,7 @@ class _DetailState extends State<Detail> {
                                 horizontal: 10, vertical: 10)),
                       ),
                     ),
-                    // SizedBox(
-                    //   height: 10,
-                    // ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.end,
-                    //   children: [
 
-                    //     SizedBox(
-                    //       width: 10,
-                    //     )
-                    //   ],
-                    // ),
                     SizedBox(
                       height: 5,
                     ),
@@ -470,70 +439,7 @@ class _DetailState extends State<Detail> {
                               isbn13 + "Note", _noteController.text.toString());
 
                           print('DONE Saving');
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(6.0))),
-                                contentPadding: EdgeInsets.zero,
-                                //title: Center(child: Text("Picture")),
-                                content: SingleChildScrollView(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.white,
-                                    ),
-                                    //color: Colors.white,
-
-                                    //padding: EdgeInsets.all(5),
-                                    //padding: EdgeInsets.all(10),
-
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        //
-                                        Container(
-                                          padding: EdgeInsets.all(20),
-                                          child: Text(
-                                            "Note Saved",
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(6.0),
-                                                  bottomRight:
-                                                      Radius.circular(6.0),
-                                                ),
-                                                color: Color(0XFF8e44ad)),
-                                            alignment: Alignment.center,
-                                            height: 50,
-                                            //color: primaryColor,
-                                            child: Text(
-                                              "Okay",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
+                          utilities.messageDialog(context, "Noted Save");
                         },
                         child: Text(
                           'Save Note',
@@ -544,33 +450,6 @@ class _DetailState extends State<Detail> {
                     SizedBox(
                       height: 10,
                     ),
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //       child: Container(
-                    //         padding: EdgeInsets.symmetric(
-                    //             vertical: 10, horizontal: 10),
-                    //         child: RaisedButton(
-                    //           color: Colors.blueAccent,
-                    //           onPressed: () {
-                    //             Navigator.push(
-                    //                 context,
-                    //                 MaterialPageRoute(
-                    //                   builder: (context) => BookWebView(
-                    //                     title: book.title,
-                    //                     url: book.url,
-                    //                   ),
-                    //                 ));
-                    //           },
-                    //           child: Text(
-                    //             'See in Website',
-                    //             style: TextStyle(color: Colors.white),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     )
-                    //   ],
-                    // ),
                     Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: 20.0,
