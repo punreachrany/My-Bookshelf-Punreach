@@ -4,6 +4,13 @@ A new Flutter project.
 
 - Demo Link: https://youtu.be/8CVjhotsAsQ
 
+## Packages
+- http: ^0.12.2   => https://pub.dev/packages/http
+- webview_flutter: ^1.0.7   => https://pub.dev/packages/webview_flutter
+- url_launcher: ^5.7.10   => https://pub.dev/packages/url_launcher
+- shared_preferences: ^0.5.12+4   => https://pub.dev/packages/shared_preferences
+- path_provider: ^1.6.24 => https://pub.dev/packages/path_provider
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
