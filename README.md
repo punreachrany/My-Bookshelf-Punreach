@@ -4,6 +4,11 @@ A new Flutter project.
 
 - Demo Link: https://youtu.be/8CVjhotsAsQ
 
+# Setup
+- Clone the repository
+- run `flutter pub get`
+- run `flutter run`
+
 ## Packages
 - http: ^0.12.2   => https://pub.dev/packages/http
 - webview_flutter: ^1.0.7   => https://pub.dev/packages/webview_flutter
