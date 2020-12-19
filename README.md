@@ -4,18 +4,18 @@ A new Flutter project.
 
 - Demo Link: https://youtu.be/8CVjhotsAsQ
 
-# Setup
-- Clone the repository
+## Setup
+- `git clone https://github.com/punreachrany/My-Bookshelf-Punreach.git`
 - run `flutter pub get`
 - run `flutter run`
 
 ## Packages
-- http: ^0.12.2   => https://pub.dev/packages/http
-- webview_flutter: ^1.0.7   => https://pub.dev/packages/webview_flutter
-- url_launcher: ^5.7.10   => https://pub.dev/packages/url_launcher
-- shared_preferences: ^0.5.12+4   => https://pub.dev/packages/shared_preferences
-- path_provider: ^1.6.24 => https://pub.dev/packages/path_provider
-- connectivity: ^2.0.2 => https://pub.dev/packages/connectivity
+- `http: ^0.12.2`   => https://pub.dev/packages/http
+- `webview_flutter: ^1.0.7`   => https://pub.dev/packages/webview_flutter
+- `url_launcher: ^5.7.10`   => https://pub.dev/packages/url_launcher
+- `shared_preferences: ^0.5.12+4`   => https://pub.dev/packages/shared_preferences
+- `path_provider: ^1.6.24` => https://pub.dev/packages/path_provider
+- `connectivity: ^2.0.2` => https://pub.dev/packages/connectivity
 
 
 ## Getting Started
