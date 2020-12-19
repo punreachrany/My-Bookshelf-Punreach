@@ -29,10 +29,10 @@ class _SearchState extends State<Search> {
     List<Book> queryBooks = new List<Book>();
     String localData = prefs.getString("https://api.itbook.store/1.0/new");
 
-    print("https://api.itbook.store/1.0/new");
+    print("InitSearch");
 
     if (localData != null) {
-      print("=== Load from Local ===");
+      print("=== Load InitSearch from Local ===");
       var decodedData = jsonDecode(localData);
 
       await decodedData.forEach((book) => queryBooks.add(Book.fromJson(book)));
@@ -42,7 +42,7 @@ class _SearchState extends State<Search> {
         var data = response["data"]["books"];
         await data.forEach((book) => queryBooks.add(Book.fromJson(book)));
 
-        print("==== Save to Local ====");
+        print("==== Save InitSearch to Local ====");
         await prefs.setString(
             "https://api.itbook.store/1.0/new", jsonEncode(data));
         print("=== Local Saved Successful ===");
@@ -59,24 +59,23 @@ class _SearchState extends State<Search> {
     String localData = prefs.getString(query);
     List<Book> queryBooks = new List<Book>();
 
-    print(query);
+    // print(query);
 
     if (localData != null) {
-      print("=== Load from Local ===");
+      print("=== Load keyword : >$query< from Local ===");
       var decodedData = jsonDecode(localData);
 
       await decodedData.forEach((book) => queryBooks.add(Book.fromJson(book)));
 
       if (mounted) {
         setState(() {
-          // books = isFreeOnly ? queryBooks.where((book)=> book.price == "\$0.00").toList() :  queryBooks;
           books = queryBooks;
           isSearching = false;
         });
       }
     } else {
-//
-      print("=== Load From API ===");
+      print("=== Load keyword : >$query< From API ===");
+
       if (mounted) setState(() => isSearching = true);
       if (query.trim().isEmpty) {
         init();
@@ -94,7 +93,7 @@ class _SearchState extends State<Search> {
 
         await data.forEach((book) => queryBooks.add(Book.fromJson(book)));
 
-        print("==== Save to Local ====");
+        print("==== Save keyword : >$query< to Local ====");
         await prefs.setString(query, jsonEncode(data));
         print("=== Local Saved Successful ===");
 
@@ -131,13 +130,15 @@ class _SearchState extends State<Search> {
   Future<String> _getImage(String isbn13, String imageURL) async {
     String base64;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    base64 = prefs.getString(isbn13 + ".png");
+    base64 = prefs.getString(isbn13 + "_cache_image");
+    // print("=== Check for >$isbn13 cache image< in Local ===");
     if (base64 == null) {
+      // print("=== Save >$isbn13 cache image< to Local ===");
       final http.Response response = await http.get(
         imageURL,
       );
       base64 = base64Encode(response.bodyBytes);
-      prefs.setString(isbn13 + ".png", base64);
+      prefs.setString(isbn13 + "_cache_image", base64);
     }
     return base64;
   }

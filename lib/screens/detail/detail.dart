@@ -32,13 +32,15 @@ class _DetailState extends State<Detail> {
   Future<String> _getImage(String imageURL) async {
     String base64;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    base64 = prefs.getString(isbn13 + ".png");
+    base64 = prefs.getString(isbn13 + "_cache_image");
+    // print("=== Check for >$isbn13 cache image< in Local ===");
     if (base64 == null) {
+      // print("=== Save >$isbn13 cache image< to Local ===");
       final http.Response response = await http.get(
         imageURL,
       );
       base64 = base64Encode(response.bodyBytes);
-      prefs.setString(isbn13 + ".png", base64);
+      prefs.setString(isbn13 + "_cache_image", base64);
     }
     return base64;
   }
@@ -48,7 +50,7 @@ class _DetailState extends State<Detail> {
     Book queryBooks = new Book();
     String localData = prefs.getString(isbn13 + "book");
 
-    print(isbn13);
+    print("=== Get book details for Book by isbn13 >$isbn13< ===");
 
     if (localData != null) {
       print("=== Load from Local Book Details ===");
@@ -460,6 +462,7 @@ class _DetailState extends State<Detail> {
                         color: Color(0XFF8e44ad),
                         onPressed: () async {
                           //save note
+                          print("=== Save note by isbn13 ===");
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           //save note by taking isbn13 as key
@@ -626,6 +629,7 @@ class _DetailState extends State<Detail> {
   _loadNote() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    print("=== Try to load user Note ===");
     setState(() {
       _noteController.text = prefs.getString(isbn13 + "Note");
     });
