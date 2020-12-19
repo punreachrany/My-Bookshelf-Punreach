@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:My_Bookshelf_Punreach/models/book.dart';
+import 'package:My_Bookshelf_Punreach/screens/detail/book_webview.dart';
 import 'package:My_Bookshelf_Punreach/services/book_api.dart';
+import 'package:My_Bookshelf_Punreach/shares/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -90,8 +92,521 @@ class _DetailState extends State<Detail> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    var size = MediaQuery.of(context).size;
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: Text("Book Details"),
+      ),
+      body: book == null
+          ? Loading()
+          : Container(
+              width: double.infinity,
+              height: double.infinity,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              // colors: [Color(0XFF83a4d4), Color(0xFFB6FBFF)],
+                              colors: [Color(0XFF9b59b6), Color(0XFF8e44ad)]),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Center(
+                                  child: Card(
+                                    color: Colors.transparent,
+                                    // with Material
+                                    child: FutureBuilder<String>(
+                                        future: _getImage(book.image),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.data != null) {
+                                            String _base64 = snapshot.data;
+                                            var bytes = base64Decode(_base64);
+                                            return Image.memory(
+                                              bytes,
+                                              width: size.width / 3,
+                                              fit: BoxFit.contain,
+                                            );
+                                          } else {
+                                            return Loading();
+                                          }
+                                        }),
+
+                                    // Image.network(
+                                    //   book.image,
+                                    //   width: size.width / 3,
+                                    //   fit: BoxFit.contain,
+                                    // ),
+                                    elevation: 30,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          book.title,
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(
+                                          height: 7,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                book.subtitle,
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    // fontSize: 14,
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          children: _buildRating(),
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Authors: ',
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                book.authors,
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(height: 3),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Publisher: ',
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                book.publisher,
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(height: 3),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Language: ',
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                book.language,
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(height: 3),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Year: ',
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                book.year,
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(height: 3),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Total Pages: ',
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                book.pages.toString(),
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(height: 3),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Price: ',
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.white),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                book.price,
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        )),
+                    // Divider(),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Description",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        book.desc,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    // Container(
+                    //   padding:
+                    //       EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    //   alignment: Alignment.centerLeft,
+                    //   child: Text(book.),
+                    // ),
+
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: _noteController,
+                        maxLines: 5,
+                        style: TextStyle(fontSize: 16),
+                        decoration: InputDecoration(
+
+                            // labelText: 'Note',
+                            // labelStyle:
+                            //     TextStyle(fontSize: 14, color: Colors.grey),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4),
+                              borderSide: BorderSide(
+                                color: Colors.blueAccent,
+                                width: 1,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4),
+                              borderSide: BorderSide(
+                                color: Colors.redAccent,
+                                width: 1,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4),
+                              borderSide: BorderSide(
+                                color: Colors.redAccent,
+                                width: 1,
+                              ),
+                            ),
+                            hintText: "Write your note here...",
+                            hintStyle: TextStyle(fontSize: 16),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4),
+                              borderSide: BorderSide(
+                                color: Colors.blueAccent,
+                                width: 1,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10)),
+                      ),
+                    ),
+                    // SizedBox(
+                    //   height: 10,
+                    // ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.end,
+                    //   children: [
+
+                    //     SizedBox(
+                    //       width: 10,
+                    //     )
+                    //   ],
+                    // ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      alignment: Alignment.centerRight,
+                      child: RaisedButton(
+                        elevation: 5.0,
+                        padding: EdgeInsets.all(12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        color: Color(0XFF8e44ad),
+                        onPressed: () async {
+                          //save note
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          //save note by taking isbn13 as key
+                          await prefs.setString(
+                              isbn13 + "Note", _noteController.text.toString());
+
+                          print('DONE Saving');
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(6.0))),
+                                contentPadding: EdgeInsets.zero,
+                                //title: Center(child: Text("Picture")),
+                                content: SingleChildScrollView(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white,
+                                    ),
+                                    //color: Colors.white,
+
+                                    //padding: EdgeInsets.all(5),
+                                    //padding: EdgeInsets.all(10),
+
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        //
+                                        Container(
+                                          padding: EdgeInsets.all(20),
+                                          child: Text(
+                                            "Note Saved",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(6.0),
+                                                  bottomRight:
+                                                      Radius.circular(6.0),
+                                                ),
+                                                color: Color(0XFF8e44ad)),
+                                            alignment: Alignment.center,
+                                            height: 50,
+                                            //color: primaryColor,
+                                            child: Text(
+                                              "Okay",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Text(
+                          'Save Note',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: Container(
+                    //         padding: EdgeInsets.symmetric(
+                    //             vertical: 10, horizontal: 10),
+                    //         child: RaisedButton(
+                    //           color: Colors.blueAccent,
+                    //           onPressed: () {
+                    //             Navigator.push(
+                    //                 context,
+                    //                 MaterialPageRoute(
+                    //                   builder: (context) => BookWebView(
+                    //                     title: book.title,
+                    //                     url: book.url,
+                    //                   ),
+                    //                 ));
+                    //           },
+                    //           child: Text(
+                    //             'See in Website',
+                    //             style: TextStyle(color: Colors.white),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     )
+                    //   ],
+                    // ),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                        vertical: 10,
+                      ),
+                      width: double.infinity,
+                      child: RaisedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BookWebView(
+                                  title: book.title,
+                                  url: book.url,
+                                ),
+                              ));
+                        },
+                        elevation: 5.0,
+                        padding: EdgeInsets.all(12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        color: Color(0XFF8e44ad),
+                        child: Text(
+                          'See in Website',
+                          style: TextStyle(
+                            color: Colors.white,
+                            //letterSpacing: 1.5,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+    );
   }
 
   List<Widget> _buildRating() {
