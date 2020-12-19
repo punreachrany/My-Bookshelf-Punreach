@@ -161,7 +161,7 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<ConnectivityResult>(
         stream: Connectivity().checkConnectivity().asStream(),
         builder: (context, snapshot) {
           return Scaffold(

@@ -88,7 +88,7 @@ class _DetailState extends State<Detail> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return StreamBuilder(
+    return StreamBuilder<ConnectivityResult>(
         stream: Connectivity().checkConnectivity().asStream(),
         builder: (context, snapshot) {
           return Scaffold(
