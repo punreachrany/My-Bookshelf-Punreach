@@ -439,7 +439,7 @@ class _DetailState extends State<Detail> {
                               isbn13 + "Note", _noteController.text.toString());
 
                           print('DONE Saving');
-                          utilities.messageDialog(context, "Noted Save");
+                          utilities.messageDialog(context, "Note Saved");
                         },
                         child: Text(
                           'Save Note',
