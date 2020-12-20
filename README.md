@@ -3,7 +3,6 @@
 This is a flutter application that consists of 2 main screens - Search & Detail. All books information are being fetched from Bookstore API.
 - API Link: https://api.itbook.store
 
-- Code Explanation Link: https://youtu.be/TwIWm0Hbv2c
 - Demo Link: https://youtu.be/8CVjhotsAsQ
 
 ## Main Features
