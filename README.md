@@ -32,6 +32,7 @@ The project is divided into 4 main folders inside `lib` folder:
 - `models`: consists of Book model, which will be used to map with the data fetched from Bookstore API.
 - `screens`: consists of 2 main screens: Search and Detail.
     - In `Search` Screen, user will first see a list of the new books provided by the API. We have a search engine which allows users to search for a list of books with their keyword. If user taps on any book in listview, the application will get the user to the Detail Screen.
+        - In the `search engine`, I made it search every time the user types. We can also boast the app performance by creating a search button so that our user can finish his typing before start searching
     - In `Detail` Screen, users will see the details/description of the book they selected, and user can also write a note in this screen. In addition, there is a ‘See in Website’ button at bottom of the screen. This button will get our users to the webview inside our application. Users can also launch the webpage inside their mobile phone browser by tapping on the floating button.
     - Notice that all data fetched from the API and all images rendered from the internet will be cached into the phone local memory by using `shared_preferences`. This means that the next time our users renders the same data, our application will load those data from the local memory instead of going to the internet.
 
