@@ -18,6 +18,7 @@ enum LoadingState { loading, done }
 class _SearchState extends State<Search> {
   // For Loading
   bool isSearching = false;
+  bool isTyping = false;
   LoadingState state = LoadingState.loading;
   bool isLoadingMore = false;
 
@@ -197,9 +198,25 @@ class _SearchState extends State<Search> {
                           ],
                         ),
                         child: TextField(
+                          textInputAction: TextInputAction.search,
                           controller: searchController,
                           onChanged: (text) {
                             if (text.isNotEmpty) {
+                              setState(() {
+                                isTyping = true;
+                              });
+                            } else {
+                              setState(() {
+                                isTyping = false;
+                              });
+                              initSearch();
+                            }
+                          },
+                          onSubmitted: (text) {
+                            if (text.isNotEmpty) {
+                              setState(() {
+                                isTyping = false;
+                              });
                               searchBooks(text);
                             } else {
                               initSearch();
@@ -263,6 +280,13 @@ class _SearchState extends State<Search> {
                             return Center(
                                 child: Text(
                               "Searching for ${searchController.text}...",
+                              style: TextStyle(fontSize: 20),
+                            ));
+                          }
+                          if (isTyping) {
+                            return Center(
+                                child: Text(
+                              "Press enter to search for ${searchController.text}...",
                               style: TextStyle(fontSize: 20),
                             ));
                           }
