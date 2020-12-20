@@ -55,13 +55,14 @@ Link: https://www.youtube.com/watch?v=7oIAs-0G4mw&feature=emb_title
 - `data cache implementation`: For large amount of data, it is recommended to use a third-party library called `sqflite`
 
 ## App UI
-- Search Screen
-<img width="1792" alt="Screen Shot 2020-12-19 at 7 47 15 PM" src="https://user-images.githubusercontent.com/54469196/102687563-557db880-4233-11eb-9398-6443caa0998f.png">
 
-- Detail Screen
-<img width="1792" alt="Screen Shot 2020-12-19 at 7 48 05 PM" src="https://user-images.githubusercontent.com/54469196/102687572-5ca4c680-4233-11eb-8f4f-00e7e2da8313.png">
+<img width="679" alt="Screen Shot 2020-12-20 at 4 02 10 PM" src="https://user-images.githubusercontent.com/54469196/102707308-2e7bc100-42dd-11eb-815f-a9ec6dcddb07.png">
 
-- Webview, Browser View & Search Screen
-<img width="1792" alt="Screen Shot 2020-12-19 at 7 48 22 PM" src="https://user-images.githubusercontent.com/54469196/102687574-5dd5f380-4233-11eb-914c-6bc39ce8499f.png">
+<img width="661" alt="Screen Shot 2020-12-20 at 4 02 29 PM" src="https://user-images.githubusercontent.com/54469196/102707311-320f4800-42dd-11eb-82a3-1b176d349395.png">
+
+<img width="968" alt="Screen Shot 2020-12-20 at 4 02 51 PM" src="https://user-images.githubusercontent.com/54469196/102707312-33407500-42dd-11eb-81b8-1bc31f58e74a.png">
+
+<img width="625" alt="Screen Shot 2020-12-20 at 4 03 29 PM" src="https://user-images.githubusercontent.com/54469196/102707313-3471a200-42dd-11eb-8984-6ab1669b5e9e.png">
+
 
 
