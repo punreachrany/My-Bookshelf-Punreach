@@ -34,7 +34,7 @@ The project is divided into 4 main folders inside `lib` folder:
     - In `Search` Screen, user will first see a list of the new books provided by the API. We have a search engine which allows users to search for a list of books with their keyword. If user taps on any book in listview, the application will get the user to the Detail Screen.
         - In the `search engine`, Before this, I made it search every time the user types. But I decided to boast the app performance by using the `search keyboard` so that our user can finish his typing before processing the search functionality. In other word, the user has to press enter in order to search.
     - In `Detail` Screen, users will see the details/description of the book they selected, and user can also write a note in this screen. In addition, there is a ‘See in Website’ button at bottom of the screen. This button will get our users to the webview inside our application. Users can also launch the webpage inside their mobile phone browser by tapping on the floating button.
-    - Notice that all data fetched from the API and all images rendered from the internet will be cached into the phone local memory by using `shared_preferences`. This means that the next time our users renders the same data, our application will load those data from the local memory instead of going to the internet.
+    - Notice that all data fetched from the API and all images rendered from the internet will be **cached into the phone local memory** by using `shared_preferences`. This means that the next time our users renders the same data, our application will load those data from the local memory instead of going to the internet.
 
 - `service`: handles different methods of `Bookstore API`. Normally, I’d like to put everything related to the server side including authentication, database and so on. But this time, I decided to put the Bookstore API method inside this folder. In this `book_api.dart` file, we have
     - `getAllNewBook()` method will render the new book from the rest API.
@@ -48,7 +48,7 @@ The project is divided into 4 main folders inside `lib` folder:
 
 
 ## Alternative Implementation
-The description below are the alternative implementations for some of the functionality our application. However, due to assessment restriction from using any third-party package, I didn't implement it in those ways.
+The description below are the alternative implementations for some of the functionality our application. **However, due to assessment restriction from using any third-party package, I DID NOT implement it in those ways.**
 - `image cache implementation`: Flutter actually recommends us to use a third-party package called `cached_network_image`. 
 Link: https://flutter.dev/docs/cookbook/images/cached-images
 Furthermore, there is even a video provided by flutter team that. The `image.network` widget will automatically cache the image. However, it doesn't work that.
